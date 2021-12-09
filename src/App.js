@@ -6,6 +6,7 @@ function App() {
     const [order, setOrder] = useState('DESC');
     const [showForm, setShowForm] = useState(false);
     const [editData, setEditData] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetch('https://run.mocky.io/v3/3f275018-4a34-4354-ab35-83a8784a0056')
@@ -26,19 +27,53 @@ function App() {
     const handleEdit = (row) => {
         setShowForm(true);
         setEditData(row);
-        console.log('handle Edit', row);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const rowID = e.target.id.value;
-        console.log(dataTable);
+        const thresholdCondition = e.target.thresholdCondition.value;
+        const customerId = e.target.customerId.value;
+        const name = e.target.name.value;
 
-        const IdToBeEdited = dataTable.filter((table) => table.id === rowID);
-        console.log(IdToBeEdited);
+        let keyToBeEdited = null;
+        for (let i = 0; i < dataTable.length; i++) {
+            if (dataTable[i].id === rowID) {
+                keyToBeEdited = i;
+            }
+        }
+
+        const newObject = {
+            id: rowID,
+            thresholdCondition,
+            customerId,
+            name,
+        };
+
+        const newDataTable = [...dataTable];
+
+        newDataTable.splice(keyToBeEdited, 1);
+        newDataTable.push(newObject);
+        setDataTable(newDataTable);
+    };
+
+    const handleSearch = (event) => {
+        const searchTerm = event.target.value;
+        const result = dataTable.filter((row) => row.name === searchTerm);
+        if (result.length > 0) {
+            setDataTable(result);
+        }
     };
     return (
         <div className="App">
+            <div className="searchBox">
+                <label>Search:</label>
+                <input
+                    type="text"
+                    name="searchItem"
+                    onChange={(event) => handleSearch(event)}
+                />
+            </div>
             <div className="headerRow">
                 <span>id</span>
                 <span>thresholdCondition</span>
@@ -64,20 +99,35 @@ function App() {
             })}
 
             <div className={`form ${showForm ? 'show' : 'hide'}`}>
-                EDIT:
                 <form onSubmit={handleSubmit}>
-                    <input type="text" name="id" value={editData.id} />
-                    <input
-                        type="text"
-                        name="thresholdCondition"
-                        value={editData.thresholdCondition}
-                    />
-                    <input
-                        type="text"
-                        name="CustomerId"
-                        value={editData.customerId}
-                    />
-                    <input type="text" name="Name" value={editData.name} />
+                    <div className="inputContainer">
+                        <label>ID:</label>
+                        <input type="text" name="id" value={editData.id} />
+                    </div>
+                    <div className="inputContainer">
+                        <label>ThresholdCondition:</label>
+                        <input
+                            type="text"
+                            name="thresholdCondition"
+                            defaultValue={editData.thresholdCondition}
+                        />
+                    </div>
+                    <div className="inputContainer">
+                        <label>CustomerId:</label>
+                        <input
+                            type="text"
+                            name="customerId"
+                            defaultValue={editData.customerId}
+                        />
+                    </div>
+                    <div className="inputContainer">
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            name="name"
+                            defaultValue={editData.name}
+                        />
+                    </div>
                     <div className="button-container">
                         <button type="submit">Save</button>
                         <button onClick={() => setShowForm(false)}>

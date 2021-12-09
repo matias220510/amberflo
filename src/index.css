@@ -15,7 +15,7 @@ code {
 .headerRow {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    border: 2px solid black;
+    border: 1px solid black;
 }
 
 .rowContainer {
@@ -38,4 +38,25 @@ code {
 
 .show {
     display: block;
+}
+
+.form {
+    display: flex;
+    justify-content: center;
+}
+
+.inputContainer {
+    margin: 10px;
+}
+
+.inputContainer label {
+    margin-right: 10px;
+}
+
+.searchBox {
+    margin: 20px;
+}
+
+.searchBox label {
+    margin-right: 10px;
 }
